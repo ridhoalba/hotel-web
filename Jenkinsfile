@@ -5,6 +5,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'building'
+                sh '''
+                ssh-keygen -f server -y
+
+                '''
             }
         }
 
