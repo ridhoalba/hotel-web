@@ -7,7 +7,7 @@ pipeline {
                 echo 'building'
                 sh '''
                     ls
-                    ssh-keygen -f server -y
+                    ssh-keygen -f server 
                 '''
             }
         }
