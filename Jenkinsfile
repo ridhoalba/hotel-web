@@ -4,8 +4,19 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo '.....'
-                echo 'Hello World'
+                echo 'building'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'testing'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                ansiblePlaybook become: true, credentialsId: 'server-jenkins-to-deploy', disableHostKeyChecking: true, installation: 'ansible', inventory: '/root/.jenkins/workspace/hotel-web/ansible/inventory/hosts', playbook: '/root/.jenkins/workspace/hotel-web/ansible/playbook/install-apache-and-configure.yaml', vaultTmpPath: ''
             }
         }
     }

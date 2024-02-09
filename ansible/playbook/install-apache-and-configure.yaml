@@ -1,0 +1,46 @@
+---
+- name: configure website
+  hosts: all
+  become: yes
+  tasks:
+    - name: update package
+      apt:
+        update_cache: yes
+
+    - name: check apache2
+      stat:
+        path: /etc/apache2/apache2.conf
+      register: apache_check
+
+    - name: install apache2 if not installed
+      apt:
+        name: apache2
+        state: present
+      when: apache_check.stat.exists == False
+
+    - name: copy apache2 config file
+      copy:
+        src: /root/.jenkins/workspace/hotel-web/ansible/hotel-web.conf
+        dest: /etc/apache2/sites-available/
+      notify: Restart Apache
+
+    - name: copy file website
+      copy:
+        src: /root/.jenkins/workspace/hotel-web/
+        dest: /var/www/hotel-web
+
+    - name: enable website
+      shell:
+        cmd: a2ensite hotel-web.conf
+        chdir: /etc/apache2/sites-available/
+
+    - name: copy ports.conf
+      copy:
+        src: /root/.jenkins/workspace/hotel-web/ansible/ports.conf
+        dest: /etc/apache2/
+
+  handlers:
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
